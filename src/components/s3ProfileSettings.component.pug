@@ -14,29 +14,51 @@
             label(translate) Region
             input.form-control(
                 type='text',
-                placeholder='us-east-1',
+                placeholder='From the AWS CLI configuration, or us-east-1',
                 [(ngModel)]='profile.options.region',
             )
     .col-6
         .mb-3
-            label(translate) Access key ID
-            input.form-control(
-                type='text',
-                [(ngModel)]='profile.options.accessKeyId',
-                (change)='checkSavedSecretKey()',
-            )
+            label(translate) Authentication
+            select.form-control([(ngModel)]='profile.options.auth')
+                option(value='keys', translate) Access key
+                option(value='awsProfile', translate) AWS CLI profile
+                option(value='environment', translate) Environment and default AWS CLI profile
 
-.form-line(*ngIf='profile.options.accessKeyId')
-    .header
-        .title(translate) Secret access key
-        .description(*ngIf='!hasSavedSecretKey', translate) Save the secret key in the vault or keychain, or enter it on every connection
-        .description(*ngIf='hasSavedSecretKey', translate) There is a saved secret key for this access key
-    button.btn.btn-success.ms-4(*ngIf='!hasSavedSecretKey', (click)='setSecretKey()')
-        i.fas.fa-key
-        span(translate) Set secret key
-    button.btn.btn-danger.ms-4(*ngIf='hasSavedSecretKey', (click)='clearSavedSecretKey()')
-        i.fas.fa-trash-alt
-        span(translate) Forget
+ng-container(*ngIf='profile.options.auth === "keys"')
+    .mb-3
+        label(translate) Access key ID
+        input.form-control(
+            type='text',
+            [(ngModel)]='profile.options.accessKeyId',
+            (change)='checkSavedSecretKey()',
+        )
+
+    .form-line(*ngIf='profile.options.accessKeyId')
+        .header
+            .title(translate) Secret access key
+            .description(*ngIf='!hasSavedSecretKey', translate) Save the secret key in the vault or keychain, or enter it on every connection
+            .description(*ngIf='hasSavedSecretKey', translate) There is a saved secret key for this access key
+        button.btn.btn-success.ms-4(*ngIf='!hasSavedSecretKey', (click)='setSecretKey()')
+            i.fas.fa-key
+            span(translate) Set secret key
+        button.btn.btn-danger.ms-4(*ngIf='hasSavedSecretKey', (click)='clearSavedSecretKey()')
+            i.fas.fa-trash-alt
+            span(translate) Forget
+
+.mb-3(*ngIf='profile.options.auth === "awsProfile"')
+    label(translate) Profile name
+    input.form-control(
+        type='text',
+        alwaysVisibleTypeahead,
+        placeholder='default',
+        [(ngModel)]='profile.options.awsProfile',
+        [ngbTypeahead]='awsProfilesAutocomplete',
+    )
+    small.text-muted(translate) A profile from ~/.aws/config or ~/.aws/credentials. For SSO profiles, sign in with "aws sso login" first.
+
+.mb-3(*ngIf='profile.options.auth === "environment"')
+    small.text-muted(translate) Uses AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY, AWS_PROFILE, or the default AWS CLI profile - whichever is found first, as the AWS CLI does.
 
 .form-line
     .header

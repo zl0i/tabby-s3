@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { Component } from '@angular/core'
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap'
+import { Observable, map } from 'rxjs'
 import { ProfileSettingsComponent, PromptModalComponent } from 'tabby-core'
 import { S3Profile } from '../api'
+import { listAwsProfiles } from '../awsConfig'
 import { S3CredentialsService } from '../services/credentials.service'
 
 /** @hidden */
@@ -12,13 +14,19 @@ import { S3CredentialsService } from '../services/credentials.service'
 export class S3ProfileSettingsComponent implements ProfileSettingsComponent<S3Profile> {
     profile: S3Profile
     hasSavedSecretKey = false
+    awsProfiles: string[] = []
 
     constructor (
         private ngbModal: NgbModal,
         private credentials: S3CredentialsService,
     ) { }
 
+    awsProfilesAutocomplete = (text$: Observable<string>) => text$.pipe(map(query =>
+        this.awsProfiles.filter(x => !query || x.toLowerCase().includes(query.toLowerCase())),
+    ))
+
     async ngOnInit () {
+        this.awsProfiles = await listAwsProfiles()
         await this.checkSavedSecretKey()
     }
 

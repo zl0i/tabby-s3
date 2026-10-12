@@ -14,7 +14,9 @@ export class S3ProfilesService extends ProfileProvider<S3Profile> {
         options: {
             endpoint: '',
             region: '',
+            auth: 'keys',
             accessKeyId: '',
+            awsProfile: '',
             forcePathStyle: false,
             bucket: '',
             prefix: '',
@@ -48,7 +50,7 @@ export class S3ProfilesService extends ProfileProvider<S3Profile> {
     }
 
     getDescription (profile: PartialProfile<S3Profile>): string {
-        const host = profile.options?.endpoint?.replace(/^\w+:\/\//, '') || 'AWS'
+        const host = (profile.options?.endpoint?.replace(/^\w+:\/\//, '') ?? '') || 'AWS'
         return profile.options?.bucket ? `${profile.options.bucket} @ ${host}` : host
     }
 }

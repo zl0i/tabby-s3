@@ -5,6 +5,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap'
 import TabbyCoreModule, { ProfileProvider, TabRecoveryProvider } from 'tabby-core'
 
 import { S3ProfileSettingsComponent } from './components/s3ProfileSettings.component'
+import { S3PropertiesModalComponent } from './components/s3PropertiesModal.component'
 import { S3TabComponent } from './components/s3Tab.component'
 import { S3ProfilesService } from './profiles'
 import { RecoveryProvider } from './recoveryProvider'
@@ -23,6 +24,7 @@ import { RecoveryProvider } from './recoveryProvider'
     ],
     declarations: [
         S3ProfileSettingsComponent,
+        S3PropertiesModalComponent,
         S3TabComponent,
     ],
 })

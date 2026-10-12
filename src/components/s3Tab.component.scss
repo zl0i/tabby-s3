@@ -11,7 +11,7 @@
         flex: none;
     }
 
-    > .filter-bar {
+    > .filter-bar, > .action-bar {
         flex: none;
     }
 
@@ -19,6 +19,12 @@
         padding: 10px 20px;
         flex: 1 1 0;
         overflow-y: auto;
+    }
+
+    .busy {
+        font-size: 12px;
+        opacity: .75;
+        white-space: nowrap;
     }
 
     .breadcrumb {
@@ -41,6 +47,34 @@
         &:hover {
             background: rgba(white, .05);
         }
+
+        &.selected {
+            background: rgba(white, .1);
+        }
+    }
+
+    .columns {
+        font-size: 12px;
+        opacity: .75;
+
+        .sortable {
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            user-select: none;
+        }
+    }
+
+    .form-check-input {
+        margin-top: 0;
+        flex: none;
+    }
+
+    .name {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .size, .date {
@@ -49,6 +83,12 @@
         font-size: 12px;
         text-align: right;
         margin-left: 20px;
+        flex: none;
+    }
+
+    .columns .size, .columns .date {
+        font-family: inherit;
+        opacity: 1;
     }
 
     .size {

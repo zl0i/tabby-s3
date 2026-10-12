@@ -1,15 +1,25 @@
 {
   "name": "tabby-s3",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "S3-compatible object storage browser for Tabby",
   "keywords": [
     "tabby-plugin"
   ],
+  "homepage": "https://github.com/zl0i/tabby-s3#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zl0i/tabby-s3.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zl0i/tabby-s3/issues"
+  },
   "main": "dist/index.js",
   "scripts": {
     "build": "webpack --progress --color",
     "watch": "cross-env TABBY_DEV=1 webpack --progress --color --watch",
     "typecheck": "tsc --noEmit",
+    "lint": "eslint --ext ts src test",
+    "test": "tsc -p tsconfig.test.json && node --test \".test-out/test/*.test.js\"",
     "prepack": "npm run build"
   },
   "files": [
@@ -26,15 +36,21 @@
     "@angular/platform-browser": "^15",
     "@aws-sdk/client-s3": "^3.730.0",
     "@aws-sdk/lib-storage": "^3.730.0",
+    "@aws-sdk/s3-request-presigner": "^3.1149.0",
     "@biesbjerg/ngx-translate-extract-marker": "^1",
     "@ng-bootstrap/ng-bootstrap": "^14",
     "@ngtools/webpack": "^15",
     "@ngx-translate/core": "^14",
     "@tabby-gang/to-string-loader": "^1.1.7-beta.2",
     "@types/node": "22",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
     "apply-loader": "2.0.0",
     "cross-env": "^7",
     "css-loader": "^6",
+    "eslint": "^8.57.1",
+    "eslint-import-resolver-typescript": "^3.10.1",
+    "eslint-plugin-import": "^2.32.0",
     "pug": "3",
     "pug-loader": "^2",
     "rxjs": "^7",

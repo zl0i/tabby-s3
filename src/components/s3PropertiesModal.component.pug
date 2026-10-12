@@ -1,0 +1,18 @@
+.modal-header
+    h5.modal-title.text-truncate {{title}}
+
+.modal-body
+    table.table.table-sm.mb-0
+        tr(*ngFor='let property of properties')
+            th.text-nowrap.pe-3 {{property.name}}
+            td.value
+                span {{property.value}}
+            td.text-end
+                button.btn.btn-link.btn-sm.p-0(
+                    (click)='copy(property)',
+                    title='Copy'
+                )
+                    i.far.fa-copy
+
+.modal-footer
+    button.btn.btn-primary((click)='modal.close()', translate) Close

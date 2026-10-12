@@ -16,6 +16,10 @@
 
     .breadcrumb-spacer.flex-grow-1.h-100((dblclick)='editPath()')
 
+    .busy.d-flex.align-items-center.me-2(*ngIf='busy')
+        i.fas.fa-circle-notch.fa-spin.me-2
+        span {{busy}}
+
     button.btn.btn-link.btn-sm.flex-shrink-0.d-flex((click)='refresh()', [disabled]='!session')
         i.fas.fa-sync-alt.me-1
         div(translate) Refresh
@@ -23,6 +27,14 @@
     button.btn.btn-link.btn-sm.flex-shrink-0.d-flex(*ngIf='!showFilter', (click)='showFilter = true')
         i.fas.fa-filter.me-1
         div(translate) Filter
+
+    button.btn.btn-link.btn-sm.flex-shrink-0.d-flex(
+        *ngIf='!canWrite && !fixedBucket',
+        (click)='createBucket()',
+        [disabled]='!session'
+    )
+        i.fas.fa-plus.me-1
+        div(translate) Create bucket
 
     ng-container(*ngIf='canWrite')
         button.btn.btn-link.btn-sm.flex-shrink-0.d-flex((click)='createFolder()', [disabled]='!session')
@@ -49,30 +61,105 @@
         )
         button.btn.btn-secondary((click)='clearFilter()')
             i.fas.fa-times
+    small.text-muted(*ngIf='nextToken', translate) Only the loaded items are filtered
+
+.action-bar.px-3.py-2.border-bottom.d-flex.align-items-center(*ngIf='selection.size')
+    .me-auto {{selection.size}} selected
+    ng-container(*ngIf='selectedItems.length === 1')
+        button.btn.btn-link.btn-sm((click)='rename(selectedItems[0])')
+            i.fas.fa-i-cursor.me-1
+            span(translate) Rename
+        button.btn.btn-link.btn-sm((click)='showProperties(selectedItems[0])')
+            i.fas.fa-info-circle.me-1
+            span(translate) Properties
+    button.btn.btn-link.btn-sm((click)='downloadItems(selectedItems)')
+        i.fas.fa-download.me-1
+        span(translate) Download
+    button.btn.btn-link.btn-sm((click)='copyToClipboard(selectedItems, "copy")')
+        i.far.fa-copy.me-1
+        span(translate) Copy
+    button.btn.btn-link.btn-sm((click)='copyToClipboard(selectedItems, "cut")')
+        i.fas.fa-cut.me-1
+        span(translate) Cut
+    button.btn.btn-link.btn-sm.text-danger((click)='deleteItems(selectedItems)')
+        i.fas.fa-trash-alt.me-1
+        span(translate) Delete
+    button.btn.btn-link.btn-sm((click)='clearSelection()')
+        i.fas.fa-times
+
+.action-bar.px-3.py-2.border-bottom.d-flex.align-items-center(*ngIf='clipboard')
+    .me-auto
+        i.fas.fa-clipboard.me-2
+        span(*ngIf='clipboard.mode === "copy"') {{clipboard.items.length}} item(s) to copy
+        span(*ngIf='clipboard.mode === "cut"') {{clipboard.items.length}} item(s) to move
+        span.text-muted(*ngIf='!canWrite')  - open a folder to paste
+    button.btn.btn-link.btn-sm((click)='paste()', [disabled]='!canWrite || !!busy')
+        i.fas.fa-paste.me-1
+        span(translate) Paste here
+    button.btn.btn-link.btn-sm((click)='clipboard = null')
+        i.fas.fa-times
 
 .body(dropZone, (transfer)='uploadDropped($event)')
     .alert.alert-danger.d-flex.align-items-center(*ngIf='error')
         .me-auto {{error}}
+        button.btn.btn-secondary.ms-3(
+            *ngIf='authError && usesStoredKey',
+            (click)='changeSecretKey()',
+            translate
+        ) Change secret key
         button.btn.btn-secondary.ms-3((click)='connect()', translate) Retry
 
     div(*ngIf='!session && !error', translate) Connecting
     div(*ngIf='session')
         div(*ngIf='items === null', translate) Loading
-        .list-group.list-group-light(*ngIf='items !== null')
+        .list-group.list-group-light(*ngIf='items !== null && (items.length || canGoUp)')
+            .list-group-item.columns.d-flex.align-items-center
+                input.form-check-input.me-2(
+                    *ngIf='canWrite',
+                    type='checkbox',
+                    [checked]='allSelected',
+                    (change)='toggleSelectAll()',
+                    title='Select all'
+                )
+                a.sortable.me-auto((click)='sortBy("name")')
+                    span(translate) Name
+                    i.ms-1([class]='sortIcon("name")')
+                a.sortable.size((click)='sortBy("size")')
+                    i.me-1([class]='sortIcon("size")')
+                    span(translate) Size
+                a.sortable.date((click)='sortBy("modified")')
+                    i.me-1([class]='sortIcon("modified")')
+                    span(translate) Modified
+
             .list-group-item.list-group-item-action.d-flex.align-items-center(
                 *ngIf='canGoUp && (!showFilter || !filterText.trim())',
                 (click)='goUp()'
             )
+                input.form-check-input.me-2.invisible(*ngIf='canWrite', type='checkbox', disabled, tabindex='-1')
                 i.fas.fa-fw.fa-level-up-alt
                 div(translate) Go up
             .list-group-item.list-group-item-action.d-flex.align-items-center(
                 *ngFor='let item of filteredItems',
+                [class.selected]='isSelected(item)',
                 (contextmenu)='showContextMenu(item, $event)',
-                (click)='open(item)'
+                (click)='onItemClick(item, $event)'
             )
+                input.form-check-input.me-2(
+                    *ngIf='canWrite',
+                    type='checkbox',
+                    [checked]='isSelected(item)',
+                    (click)='$event.stopPropagation()',
+                    (change)='toggleSelection(item)'
+                )
                 i.fa-fw([class]='getIcon(item)')
-                div {{item.name}}
-                .me-auto
-                .size(*ngIf='!item.isDirectory') {{formatSize(item.size)}}
+                .name.me-auto {{item.name}}
+                .size {{item.isDirectory ? '' : formatSize(item.size)}}
                 .date {{item.modified ? (item.modified|tabbyDate) : ''}}
+
+        .text-center.mt-3(*ngIf='nextToken')
+            button.btn.btn-secondary((click)='loadMore()', [disabled]='loadingMore')
+                i.fas.fa-circle-notch.fa-spin.me-2(*ngIf='loadingMore')
+                span(translate) Load more
+            .text-muted.mt-1
+                small {{items?.length}} loaded
         .text-muted.text-center.mt-3(*ngIf='items !== null && !items.length && !error', translate) This folder is empty

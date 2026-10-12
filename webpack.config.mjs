@@ -32,7 +32,7 @@ export default {
         rules: [
             { test: /\.ts$/, use: ['@ngtools/webpack'] },
             { test: /\.pug$/, use: ['apply-loader', { loader: 'pug-loader', options: { pretty: true } }] },
-            { test: /\.scss$/, use: ['@tabby-gang/to-string-loader', 'css-loader', 'sass-loader'] },
+            { test: /\.scss$/, use: ['@tabby-gang/to-string-loader', 'css-loader', { loader: 'sass-loader', options: { api: 'modern' } }] },
         ],
     },
     // Provided by Tabby at runtime
