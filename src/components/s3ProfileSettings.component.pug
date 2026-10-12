@@ -1,0 +1,64 @@
+.mb-3
+    label(translate) Endpoint
+    input.form-control(
+        type='text',
+        placeholder='https://s3.amazonaws.com',
+        [(ngModel)]='profile.options.endpoint',
+        (change)='checkSavedSecretKey()',
+    )
+    small.text-muted(translate) Leave empty for AWS. For MinIO, Cloudflare R2, Yandex Object Storage and other S3-compatible storages, enter their URL.
+
+.row
+    .col-6
+        .mb-3
+            label(translate) Region
+            input.form-control(
+                type='text',
+                placeholder='us-east-1',
+                [(ngModel)]='profile.options.region',
+            )
+    .col-6
+        .mb-3
+            label(translate) Access key ID
+            input.form-control(
+                type='text',
+                [(ngModel)]='profile.options.accessKeyId',
+                (change)='checkSavedSecretKey()',
+            )
+
+.form-line(*ngIf='profile.options.accessKeyId')
+    .header
+        .title(translate) Secret access key
+        .description(*ngIf='!hasSavedSecretKey', translate) Save the secret key in the vault or keychain, or enter it on every connection
+        .description(*ngIf='hasSavedSecretKey', translate) There is a saved secret key for this access key
+    button.btn.btn-success.ms-4(*ngIf='!hasSavedSecretKey', (click)='setSecretKey()')
+        i.fas.fa-key
+        span(translate) Set secret key
+    button.btn.btn-danger.ms-4(*ngIf='hasSavedSecretKey', (click)='clearSavedSecretKey()')
+        i.fas.fa-trash-alt
+        span(translate) Forget
+
+.form-line
+    .header
+        .title(translate) Path-style addressing
+        .description(translate) Address buckets as endpoint/bucket instead of bucket.endpoint. Most self-hosted storages such as MinIO need this.
+    toggle([(ngModel)]='profile.options.forcePathStyle')
+
+.row
+    .col-6
+        .mb-3
+            label(translate) Bucket
+            input.form-control(
+                type='text',
+                placeholder='Show all buckets',
+                [(ngModel)]='profile.options.bucket',
+            )
+            small.text-muted(translate) Needed when the access key can't list buckets
+    .col-6(*ngIf='profile.options.bucket')
+        .mb-3
+            label(translate) Folder
+            input.form-control(
+                type='text',
+                placeholder='/',
+                [(ngModel)]='profile.options.prefix',
+            )
