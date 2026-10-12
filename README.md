@@ -77,7 +77,7 @@ TABBY_PLUGINS=$(pwd) tabby --debug
 Tests of the S3 operations run against a real storage; without `S3_TEST_ENDPOINT`, only the unit tests run:
 
 ```sh
-docker run -d --rm -p 19000:9000 -e MINIO_ROOT_USER=testkey -e MINIO_ROOT_PASSWORD=testsecret123 minio/minio server /data
+docker run -d --rm -p 19000:9000 -e RUSTFS_ACCESS_KEY=testkey -e RUSTFS_SECRET_KEY=testsecret123 rustfs/rustfs:1.0.1
 S3_TEST_ENDPOINT=http://127.0.0.1:19000 npm test
 ```
 
@@ -92,4 +92,4 @@ git tag v0.2.0
 git push origin v0.2.0
 ```
 
-GitHub Actions lints, tests against MinIO, builds the plugin and attaches `tabby-s3-<version>.tgz` to the release. Then run `npm publish` for the Plugin Manager. The AWS SDK is bundled into `dist/index.js`, so the package has no runtime dependencies.
+GitHub Actions lints, tests against an S3 server ([RustFS](https://github.com/rustfs/rustfs)), builds the plugin and attaches `tabby-s3-<version>.tgz` to the release. Then run `npm publish` for the Plugin Manager. The AWS SDK is bundled into `dist/index.js`, so the package has no runtime dependencies.

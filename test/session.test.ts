@@ -1,7 +1,7 @@
 /**
  * Runs against a real S3-compatible storage; skipped unless S3_TEST_ENDPOINT is set. Locally:
  *
- *   docker run -d --rm -p 19000:9000 -e MINIO_ROOT_USER=testkey -e MINIO_ROOT_PASSWORD=testsecret123 minio/minio server /data
+ *   docker run -d --rm -p 19000:9000 -e RUSTFS_ACCESS_KEY=testkey -e RUSTFS_SECRET_KEY=testsecret123 rustfs/rustfs:1.0.1
  *   S3_TEST_ENDPOINT=http://127.0.0.1:19000 npm test
  */
 import * as assert from 'assert/strict'
