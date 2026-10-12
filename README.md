@@ -32,7 +32,9 @@ Requires Tabby 1.0.224 or newer.
 Download `tabby-s3-<version>.tgz` from the [latest release](../../releases/latest), close Tabby and run:
 
 ```sh
-# Windows
+# Windows, PowerShell
+npm install --prefix "$env:APPDATA\tabby\plugins" path/to/tabby-s3-<version>.tgz
+# Windows, cmd
 npm install --prefix "%APPDATA%\tabby\plugins" path/to/tabby-s3-<version>.tgz
 # macOS
 npm install --prefix ~/Library/Application\ Support/tabby/plugins path/to/tabby-s3-<version>.tgz
@@ -40,7 +42,7 @@ npm install --prefix ~/Library/Application\ Support/tabby/plugins path/to/tabby-
 npm install --prefix ~/.config/tabby/plugins path/to/tabby-s3-<version>.tgz
 ```
 
-The plugins folder also opens from Settings → Plugins → Open Plugins Directory. Start Tabby again, and **S3 storage** shows up among the new profile types.
+The plugins folder also opens from Settings → Plugins → Open Plugins Directory. A portable Tabby that has a `data` folder next to `Tabby.exe` keeps plugins in `data\plugins` instead. Start Tabby again, and **S3 storage** shows up among the new profile types.
 
 ## Development
 
