@@ -88,8 +88,8 @@ S3_TEST_ENDPOINT=http://127.0.0.1:19000 npm test
 Bump `version` in `package.json`, then push a tag:
 
 ```sh
-git tag v0.2.0
-git push origin v0.2.0
+git tag v0.2.1
+git push origin v0.2.1
 ```
 
 GitHub Actions lints, tests against an S3 server ([RustFS](https://github.com/rustfs/rustfs)), builds the plugin and attaches `tabby-s3-<version>.tgz` to the release. Then run `npm publish` for the Plugin Manager. The AWS SDK is bundled into `dist/index.js`, so the package has no runtime dependencies.

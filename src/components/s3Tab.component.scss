@@ -11,7 +11,7 @@
         flex: none;
     }
 
-    > .filter-bar, > .action-bar {
+    > .filter-bar {
         flex: none;
     }
 
@@ -55,13 +55,24 @@
 
     .columns {
         font-size: 12px;
-        opacity: .75;
+        // The same height with column titles and with selection actions, so that the rows below don't move
+        height: 40px;
+
+        .sortable, .selection-count, .size, .date {
+            opacity: .75;
+        }
 
         .sortable {
             cursor: pointer;
             text-decoration: none;
             color: inherit;
             user-select: none;
+        }
+
+        .btn {
+            font-size: 12px;
+            padding: 0 .5rem;
+            white-space: nowrap;
         }
     }
 
@@ -88,7 +99,6 @@
 
     .columns .size, .columns .date {
         font-family: inherit;
-        opacity: 1;
     }
 
     .size {
